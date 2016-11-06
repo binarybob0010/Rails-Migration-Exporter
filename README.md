@@ -20,7 +20,8 @@ If all goes well, your migration files will be in the selected folder.
 # Limitations
 This plugin does a reasonable job exporting a database schema to Rails. However, the Rails framework places limitations on the database design. For instance, Rails does not support a primary key other than an auto-incrementing integer named 'id'. Therefore, should the exporter detect a non-standard primary key, it will alert you and stop execution. Also, all foreign key must end with '_id'.
 Remember to design your database the Rails way.
-## Supported Column Types
+
+# Supported Column Types
  * VARCHAR
  * TINYINT (as boolean only)
  * SMALLINT
@@ -35,6 +36,7 @@ Remember to design your database the Rails way.
  * TIME
  * DATETIME
  * TIMESTAMP
+
 # How It Works For the New Developer
 The following is a high level overview of how this plugin works. This is intended for the new MySQL Workbench developer who would like to modify this plugin to suit their needs, but doesn't know where to start. 
 
