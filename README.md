@@ -6,26 +6,34 @@ This plugin depends on the python module 'inflection' to pluralize words, and co
 'pip install inflection'
 If you do not have pip installed, follow the instructions at [install pip](https://packaging.python.org/installing/#id10) 
 
-# Installation
- 1. Install the dependencies
- 2. Run MySQL Workbench and click on the Scipting -> Install Plugin/Module... menu option.
- 3. Open the project folder and select the file 'export-rails-4-migrations_grt.py'.
-
 # How To Use
-To use the tool go to the menu and select Tools -> Catalog -> Export Rails 4.2 Migration
-Select the folder you wish to place the migration files in and click open.
-If all goes well, your migration files will be in the selected folder.
+## Installation
+ 1. Run MySQL Workbench and click on the Scipting -> Install Plugin/Module... menu option.
+ 2. Open the project folder and select the file 'export-rails-4-migrations_grt.py'.
+
+## Design the Database the Rails Way
+ * Use an auto-incrementing, integer named 'id' for primary keys.
+ * Append '_id' to all of your foreign key column names.
+ * Do not use composite primary keys, or foreign keys. 
+
+## Run the Plugin
+ * Select Tools -> Catalog -> Export Rails 4.2 Migration
+ * Select the folder you wish to place the migration files in.
 
 # Features
  * Handles the most common MySQL data types.
  * Handles foreign keys.
  * Handles all four index types: primary, index, unique, and fulltext using all or part of the indexed column.
- * Orders migration files, so that if a table B has foreign key to table A, table A is create before table B. The algorithm will work even if table A and table B have foreign keys to eachother. See the section on algorithm for more information.
+ * Adjusts timestamps on migration files, so that the files are migrated in topological order, and breaks any cycles. See topological ordering below for more details.
 
+# Topological Ordering
+ Suppose that table B has foreign key to table A, then table B depends on table A, and table A must migrate before table B. Topological ordering orders the tables in such a way that for any table its dendents are migrated before the table is migrated. However,  topological sorting is impossible if there are cyclic dependencies. For example, table A depends on table B, and table B depends on table A. If such a case arrises, this plugin removes a foreign key from one of the migration files, breaking the cycle, and then adds that foreign key to a resolve file. The resolve file, add_resolved_foreign_keys, is migrated last. Therefore, for each table, all its columns and foreign keys are placed in its migration file except for those foreign keys that cuase cycles. The keys that cause cycles are moved to the resolve migration file.
 
 # Limitations
-This plugin does a reasonable job exporting a database schema to Rails. However, the Rails framework places limitations on the database design. For instance, Rails does not support a primary key other than an auto-incrementing integer named 'id'. Therefore, should the exporter detect a non-standard primary key, it will alert you and stop execution. Also, all foreign keys must end with '_id'.
-Remember to design your database the Rails way.
+ * Must use an auto-incrementing, integer named 'id' for primary keys.
+ * All foreign key column names must end with '_id'
+ * Cannot use composite primary keys.
+ * Cannot use composite foreign keys.
 
 # Supported Column Types
  * VARCHAR
@@ -42,18 +50,11 @@ Remember to design your database the Rails way.
  * TIME
  * DATETIME
  * TIMESTAMP
- * TIMESTAMPS: Create a column named timestamps, and the created_at and update_at columns will be created for you.
+ * TIMESTAMPS: Create a column named timestamps, and the created_at and updated_at columns will be created for you.
 
-# How It Works For the New Developer
-The following is a high level overview of how this plugin works. This is intended for the new MySQL Workbench developer who would like to modify this plugin to suit their needs, but doesn't know where to start. 
-
-The order of migration files is important. If table B has a foreign key to table A, then table A must be created before table B. Otherwise, an error will occur since a foreign key cannot be made to a table that does not exist. We can say that table B depends on table A. Sorting the tables, such that all the depencies come before the dependent is accomplished by topoligical sorting where the tables act as vertices, and foreign keys act as edges in a directed graph. Furthermore, the tables can only be topologically sorted if there are no cycles in the graph. If there are cycles (with exception to a recursive or unary, cycle to self), the cycle must be broken or resolved. The algorithm accomplishes this by removing the foreign key from the table, and adding the key to a list that will eventually be added to the file "AddResolvedForeignKeys.".
-
-Ordering the tables topologically and breaking cycles is made more difficult because the data provided by MySQL Workbench is provided as non-copyable, read-only data. A cycle cannot be broken if the foreign key cannot be removed. My solution was to create my own classes that wrap around the existing objects that MySQL Workbench provides. I used two hashes, one to map between MySQL Workbench tables and my tables, and one to map between MySQL Workbench columns and my columns. By defining these mappings, I could encapsulate their objects inside my own without actually copying anything but the structure of the directed graph. I could then remove foreign keys from my own tables as desired. 
-
-Once the tables are sorted, all that remains is to write them to the migration files. To accomplish this a composite pattern was chosen. With SourceComponent as a base class, SCBlock component as the composite, and SCLine as the leaf. Using this design allows for a very elegant method of composing the source files. It automates indenting the source code, and allows for different sections of the file to be created independently and then added or merged together.
 # Author
  * Bob Dill
+ * Special thanks to Laura Williams who helped make this project possible.
  * Special thanks to Brandon Eckenrode for creating a module to export MySQL Workbench schemas to Laravel migrations. [MySQL Workbench Export Laravel 5 Migrations Plugin](https://github.com/beckenrode/mysql-workbench-export-laravel-5-migrations)
 
 # Available For Hire

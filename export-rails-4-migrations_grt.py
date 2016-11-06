@@ -1,6 +1,7 @@
-# This software is distributed under the GPL v3.
-# For more information, please read the gpl-3.0.txt file
-# distributed with this program.
+# -*- coding: utf-8 -*-
+# MySQL Workbench module
+# <description>
+# Written in MySQL Workbench 6.3.6
 
 from wb import *
 import grt
@@ -620,6 +621,9 @@ class SCColumn(SCFunc):
 			funcName = "t.datetime"
 		elif (colType == "TIMESTAMP"):
 			funcName = "t.timestamp"
+
+		if not funcName:
+			raise ExportError("Unsupported Column Type", "Columns of type " + colType + " are not supported. Change the column to a supported type and retry export.")
 
 		if (column.isNotNull()):
 			args.append("null:false")
