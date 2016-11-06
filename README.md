@@ -1,22 +1,27 @@
 # Rails-Migration-Exporter
 Use MySQL Workbench to generate Ruby on Rails version 4.2 migration files.
+
 # Dependencies
 This plugin depends on the python module 'inflection' to pluralize words, and convert names between CamelCase and underscore_case. To install inflection use
 'pip install inflection'
 If you do not have pip installed, follow the instructions at [Install pip](https://packaging.python.org/installing/#id10) 
+
 # Installation
  1. Install the dependencies
  2. Run MySQL Workbench and click on the Scipting -> Install Plugin/Module... menu option.
  3. Open the project folder and select the file 'export-rails-4-migrations_grt.py'.
+
 # How To Use
 To use the tool go to the menu and select Tools -> Catalog -> Export Rails 4.2 Migration
 Select the folder you wish to place the migration files in and click open.
 If all goes well, your migration files will be in the selected folder.
+
 # Features
  * Handles the most common MySQL data types.
  * Handles foreign keys.
  * Orders migration files, so that if a table B has foreign key to table A, table A is create before table B. The algorithm work even if table A and table B have foreign keys to eachother. See the section on algorithm for more information.
  * Handles full and partial indexes with unique or fulltext. 
+
 # Limitations
 This plugin does a reasonable job exporting a database schema to Rails. However, the Rails framework places limitations on the database design. For instance, Rails does not support a primary key other than an auto-incrementing integer named 'id'. Therefore, should the exporter detect a non-standard primary key, it will alert you and stop execution. Also, all foreign key must end with '_id'.
 Remember to design your database the Rails way.
