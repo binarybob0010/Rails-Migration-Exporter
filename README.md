@@ -1,4 +1,4 @@
-# Rails-Migration-Exporter
+# MySQL Workbench to Rails 4.2 Migration Exporter
 Use MySQL Workbench to generate Ruby on Rails version 4.2 migration files.
 
 # Dependencies
@@ -55,6 +55,6 @@ Once the tables are sorted, all that remains is to write them to the migration f
 # Author
  * Bob Dill
  * Special thanks to Brandon Eckenrode for creating a module to export MySQL Workbench schemas to Laravel migrations. [MySQL Workbench Export Laravel 5 Migrations Plugin](https://github.com/beckenrode/mysql-workbench-export-laravel-5-migrations)
- 
+
 # Available For Hire
 If you like this tool, and would like to hire me. Feel free to contact me via [linkedin](https://www.linkedin.com/in/bob-dill-1905a1a0?trk=nav_responsive_tab_profile_pic)
